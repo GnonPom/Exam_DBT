@@ -32,4 +32,8 @@ models:
   exam_dbt:
     # Config indicated by + and applies to all files under models/example/
     star:
+      +materialized: table
+      +tags: ['tag_uniq']
+      
+    views:
       +materialized: view

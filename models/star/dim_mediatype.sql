@@ -1,5 +1,3 @@
-{{ config(materialized='table') }}
-
 SELECT
     MEDIATYPEID AS mediatype_id,
     NAME AS name

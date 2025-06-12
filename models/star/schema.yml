@@ -36,3 +36,160 @@ models:
         data_type: VARCHAR
         data_tests:
           - not_null
+
+  - name: dim_album
+    description: "Table Dimension des albums"
+    columns:
+      - name: album_id
+        description: "Clef primaire de la table."
+        data_type: NUMBER
+        data_tests:
+          - unique
+          - not_null
+      - name: title
+        description: 'Titre de l''album.'
+        data_type: VARCHAR
+        data_tests:
+          - not_null
+      - name: prod_year
+        description: 'Annee de production de l''album.'
+        data_type: NUMBER 
+        data_tests:
+          - not_null
+      - name: cd_quantity
+        description: 'Nombre de CD dans l''album.'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+      - name: artist_name
+        description: 'Nom de l''artiste'
+        data_type: VARCHAR
+        data_tests:
+          - not_null
+      - name: artist_birth_year
+        description: 'Annee de naissance de l''artiste'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+      - name: artist_country
+        description: 'Pays de naissance de l''artiste.'
+        data_type: VARCHAR
+
+  - name: dim_genre
+    description: "Genre des albums"
+    columns:
+      - name: genre_id
+        description: 'Clef primaire de la table.'
+        data_type: NUMBER
+        data_tests:
+          - unique
+          - not_null
+      - name: name
+        description: 'Nom du genre.'
+        data_type: VARCHAR
+        data_tests:
+          - not_null
+
+  - name: dim_playlist
+    description: "Les playlists"
+    columns:
+      - name: playlist_id
+        description: 'Clef primaire de la table.'
+        data_type: NUMBER
+        data_tests:
+          - unique
+          - not_null
+      - name: name
+        description: 'Nom de la playlist.'
+        data_type: VARCHAR
+        data_tests:
+          - not_null
+
+  - name: dim_track_attribute
+    description: "Les attributs des pistes"
+    columns:
+      - name: track_attribute_id
+        description: 'Clef primaire de la table.'
+        data_type: NUMBER
+        data_tests:
+          - unique
+          - not_null
+      - name: name
+        description: 'Nom de la piste.'
+        data_type: VARCHAR
+        data_tests:
+          - not_null
+      - name: composer
+        description: 'Nom des compositeurs.'
+        data_type: VARCHAR
+        data_tests:
+          - not_null
+
+  - name: fact_track
+    description: "Table Dimension des albums"
+    columns:
+      - name: track_id
+        description: '1/2 clef primaire de la table.'
+        data_type: NUMBER 
+        data_tests:
+          - not_null
+      - name: milliseconds
+        description: 'Duree de la piste'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+      - name: bytes
+        description: 'Taille de la piste'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+      - name: unit_price
+        description: 'Prix unitaire'
+        data_type: NUMBER
+      - name: prod_year_album
+        description: 'Annee de production de l''album'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+      - name: cd_quantity_album
+        description: 'Nombre de CD de l''album.'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+      - name: album_id
+        description: 'Clef etrangere ID de l''album.'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+          - relationships: # LE TEST DE CLÉ ÉTRANGÈRE !
+              to: ref('dim_album') # Référence au modèle de dimension
+              field: album_id # La colonne dans la dimension à laquelle elle doit correspondre
+      - name: mediatype_id
+        description: 'Clef etrangere ID du type de media.'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+          - relationships: # LE TEST DE CLÉ ÉTRANGÈRE !
+              to: ref('dim_mediatype') # Référence au modèle de dimension
+              field: mediatype_id # La colonne dans la dimension à laquelle elle doit correspondre 
+      - name: genre_id
+        description: 'Clef etrangere ID du genre d''album.'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+          - relationships: # LE TEST DE CLÉ ÉTRANGÈRE !
+              to: ref('dim_genre') # Référence au modèle de dimension
+              field: genre_id # La colonne dans la dimension à laquelle elle doit correspondre
+      - name: playlist_id
+        description: '2/2 clef primaire.'
+        data_type: NUMBER
+        data_tests:
+          - not_null
+          - relationships: # LE TEST DE CLÉ ÉTRANGÈRE !
+              to: ref('dim_playlist') # Référence au modèle de dimension
+              field: playlist_id # La colonne dans la dimension à laquelle elle doit correspondre
+    data_tests:
+      - dbt_utils.unique_combination_of_columns: # Test pour l'unicité de la combinaison
+          combination_of_columns:
+            - playlist_id
+            - track_id
